@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gold Price India Live — 24K, 22K, 20K, 18K Today's Rate (₹)</title>
+  <meta name="description" content="Real-time gold price in India updated every 60 seconds. Check live 24K, 22K, 20K, and 18K gold rates per gram and 10 grams in INR with GST and making charges calculator." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+    }
+    .live-dot { animation: pulseDot 2s infinite; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
 
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md">
+          Au
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">
+            GoldPriceIndia<span class="text-amber-400">.live</span>
+          </h1>
+          <p class="text-xs text-slate-400">Real-Time Bullion & Karat Rates in INR</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 text-xs">
+        <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+          LIVE FEED
+        </span>
+        <span id="last-updated" class="text-slate-400">Updating...</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-6">
+        <div>
+          <span class="text-xs uppercase tracking-wider text-slate-400 block">Global Spot (XAU/USD)</span>
+          <span id="spot-usd" class="text-lg font-semibold text-white">$--.-- / oz</span>
+        </div>
+        <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
+        <div>
+          <span class="text-xs uppercase tracking-wider text-slate-400 block">USD / INR Rate</span>
+          <span id="usd-inr" class="text-lg font-semibold text-white">₹--.--</span>
+        </div>
+      </div>
+
+      <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 self-start md:self-auto">
+        <button id="btn-spot" onclick="setPriceMode('spot')"
+          class="px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950">
+          Raw Bullion Spot
+        </button>
+        <button id="btn-retail" onclick="setPriceMode('retail')"
+          class="px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          Est. Retail (+6% Duty & 3% GST)
+        </button>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-white">Today's Gold Rate by Purity</h2>
+        <span id="mode-caption" class="text-xs text-slate-400">Showing pure international spot parity (excluding taxes)</span>
+      </div>
+
+      <div id="karat-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </section>
+
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-lg font-semibold text-white mb-1">Gold & Jewellery Price Calculator</h2>
+      <p class="text-xs text-slate-400 mb-6">Calculate exact bullion value or final jewellery bill with making charges and 3% Indian GST.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Select Purity (Karat)</label>
+          <select id="calc-karat" onchange="calculateTotal()"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+            <option value="24K">24K (99.9% Pure)</option>
+            <option value="22K" selected>22K (916 Hallmarked)</option>
+            <option value="20K">20K (833 Purity)</option>
+            <option value="18K">18K (750 Purity)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Weight (Grams)</label>
+          <input id="calc-grams" type="number" min="0.1" step="0.1" value="10" oninput="calculateTotal()"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Making Charges (%)</label>
+          <input id="calc-making" type="number" min="0" max="50" step="0.5" value="8" oninput="calculateTotal()"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-400 mb-1.5">Include 3% GST</label>
+          <select id="calc-gst" onchange="calculateTotal()"
+            class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-400">
+            <option value="yes" selected>Yes (+3% GST)</option>
+            <option value="no">No (Exclude GST)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-5 border-t border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-slate-950/70 rounded-xl p-3.5 border border-slate-800/80">
+          <span class="text-xs text-slate-400 block">Base Gold Value</span>
+          <span id="out-base" class="text-base font-semibold text-white mt-0.5 block">₹0</span>
+        </div>
+        <div class="bg-slate-950/70 rounded-xl p-3.5 border border-slate-800/80">
+          <span class="text-xs text-slate-400 block">Making Charges</span>
+          <span id="out-making" class="text-base font-semibold text-slate-200 mt-0.5 block">₹0</span>
+        </div>
+        <div class="bg-slate-950/70 rounded-xl p-3.5 border border-slate-800/80">
+          <span class="text-xs text-slate-400 block">GST (3%)</span>
+          <span id="out-gst" class="text-base font-semibold text-slate-200 mt-0.5 block">₹0</span>
+        </div>
+        <div class="bg-amber-500/10 rounded-xl p-3.5 border border-amber-500/30">
+          <span class="text-xs text-amber-300 block">Estimated Total</span>
+          <span id="out-total" class="text-lg font-bold text-amber-400 mt-0.5 block">₹0</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800">
+        <h2 class="text-lg font-semibold text-white">Standard Weight Comparison (INR)</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-950/60 text-slate-400 text-xs uppercase">
+            <tr>
+              <th class="px-5 py-3.5">Weight</th>
+              <th class="px-5 py-3.5">24K (999)</th>
+              <th class="px-5 py-3.5">22K (916)</th>
+              <th class="px-5 py-3.5">20K (833)</th>
+              <th class="px-5 py-3.5">18K (750)</th>
+            </tr>
+          </thead>
+          <tbody id="weight-table-body" class="divide-y divide-slate-800 text-slate-200"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 px-4">
+    <p>Rates are derived from live international XAU/USD bullion feeds and USD/INR forex rates. Local jeweller prices may vary slightly by city and bullion premium.</p>
+    <p class="mt-1">© <span id="year"></span> GoldPriceIndia.live</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    let latestRates = null;
+    let priceMode = "spot";
+    const RETAIL_MULTIPLIER = 1.06 * 1.03;
+
+    const KARAT_META = {
+      "24K": { label: "24 Karat", purity: "99.9% Pure Bullion", badge: "bg-amber-400/15 text-amber-300 border-amber-400/30" },
+      "22K": { label: "22 Karat", purity: "91.6% Standard Jewellery", badge: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30" },
+      "20K": { label: "20 Karat", purity: "83.3% Hallmarked", badge: "bg-slate-700/40 text-slate-300 border-slate-600/40" },
+      "18K": { label: "18 Karat", purity: "75.0% Diamond/Stone Setting", badge: "bg-slate-700/40 text-slate-300 border-slate-600/40" }
+    };
+
+    const formatINR = (val) =>
+      "₹" + Number(val).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function setPriceMode(mode) {
+      priceMode = mode;
+      const btnSpot = document.getElementById("btn-spot");
+      const btnRetail = document.getElementById("btn-retail");
+      const caption = document.getElementById("mode-caption");
+
+      if (mode === "spot") {
+        btnSpot.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950";
+        btnRetail.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
+        caption.textContent = "Showing pure international spot parity (excluding taxes)";
+      } else {
+        btnRetail.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950";
+        btnSpot.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
+        caption.textContent = "Includes estimated 6% Indian import duty & 3% GST";
+      }
+      renderUI();
+    }
+
+    function getAdjusted1g(karat) {
+      if (!latestRates) return 0;
+      const base = latestRates.rates_inr[karat].per_1g;
+      return priceMode === "retail" ? base * RETAIL_MULTIPLIER : base;
+    }
+
+    function renderUI() {
+      if (!latestRates) return;
+
+      document.getElementById("spot-usd").textContent =
+        "$" + Number(latestRates.spot_usd_oz).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / oz";
+      document.getElementById("usd-inr").textContent = "₹" + Number(latestRates.usd_inr).toFixed(2);
+
+      const timeStr = new Date(latestRates.updated_at).toLocaleTimeString("en-IN", {
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+      });
+      document.getElementById("last-updated").textContent = "Updated: " + timeStr + " IST";
+
+      const grid = document.getElementById("karat-grid");
+      grid.innerHTML = ["24K", "22K", "20K", "18K"].map((k) => {
+        const meta = KARAT_META[k];
+        const per1g = getAdjusted1g(k);
+        const per10g = per1g * 10;
+
+        return `
+          <div class="bg-slate-900 border border-slate-800 hover:border-amber-500/40 transition rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xl font-bold text-white">${k}</span>
+                <span class="text-[11px] px-2.5 py-0.5 rounded-full border ${meta.badge}">${meta.purity}</span>
+              </div>
+              <div class="mt-4">
+                <span class="text-xs text-slate-400 block">10 Grams</span>
+                <span class="text-2xl font-bold text-amber-400 tracking-tight">${formatINR(per10g)}</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span class="text-slate-400">1 Gram Rate</span>
+              <span class="font-semibold text-slate-200">${formatINR(per1g)}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      const weights = [1, 8, 10, 50, 100];
+      const tbody = document.getElementById("weight-table-body");
+      tbody.innerHTML = weights.map((w) => `
+        <tr class="hover:bg-slate-800/40">
+          <td class="px-5 py-3.5 font-medium text-white">${w} Gram${w > 1 ? "s" : ""} ${w === 8 ? "(1 Sovereign)" : ""}</td>
+          <td class="px-5 py-3.5 text-amber-400 font-medium">${formatINR(getAdjusted1g("24K") * w)}</td>
+          <td class="px-5 py-3.5">${formatINR(getAdjusted1g("22K") * w)}</td>
+          <td class="px-5 py-3.5">${formatINR(getAdjusted1g("20K") * w)}</td>
+          <td class="px-5 py-3.5">${formatINR(getAdjusted1g("18K") * w)}</td>
+        </tr>
+      `).join("");
+
+      calculateTotal();
+    }
+
+    function calculateTotal() {
+      if (!latestRates) return;
+      const karat = document.getElementById("calc-karat").value;
+      const grams = parseFloat(document.getElementById("calc-grams").value) || 0;
+      const makingPct = parseFloat(document.getElementById("calc-making").value) || 0;
+      const includeGst = document.getElementById("calc-gst").value === "yes";
+
+      const rate1g = latestRates.rates_inr[karat].per_1g;
+      const baseValue = rate1g * grams;
+      const makingCharges = baseValue * (makingPct / 100);
+      const subTotal = baseValue + makingCharges;
+      const gstAmount = includeGst ? subTotal * 0.03 : 0;
+      const total = subTotal + gstAmount;
+
+      document.getElementById("out-base").textContent = formatINR(baseValue);
+      document.getElementById("out-making").textContent = formatINR(makingCharges);
+      document.getElementById("out-gst").textContent = formatINR(gstAmount);
+      document.getElementById("out-total").textContent = formatINR(total);
+    }
+
+    async function fetchRates() {
+      try {
+        const res = await fetch("/api/rates");
+        if (!res.ok) throw new Error("Worker route unavailable");
+        latestRates = await res.json();
+        renderUI();
+      } catch (err) {
+        try {
+          const [goldRes, fxRes] = await Promise.all([
+            fetch("https://api.gold-api.com/price/XAU"),
+            fetch("https://api.frankfurter.app/latest?from=USD&to=INR")
+          ]);
+          const goldData = await goldRes.json();
+          const fxData = await fxRes.json();
+          const xauUsd = goldData.price;
+          const usdInr = fxData.rates.INR;
+          const rate24k = (xauUsd / 31.1034768) * usdInr;
+
+          const makeKarat = (k) => ({
+            per_1g: Number((rate24k * (k / 24)).toFixed(2)),
+            per_10g: Number((rate24k * (k / 24) * 10).toFixed(2))
+          });
+
+          latestRates = {
+            updated_at: new Date().toISOString(),
+            spot_usd_oz: xauUsd,
+            usd_inr: usdInr,
+            rates_inr: {
+              "24K": makeKarat(24),
+              "22K": makeKarat(22),
+              "20K": makeKarat(20),
+              "18K": makeKarat(18)
+            }
+          };
+          renderUI();
+        } catch (fallbackErr) {
+          document.getElementById("last-updated").textContent = "Retrying feed...";
+        }
+      }
+    }
+
+    fetchRates();
+    setInterval(fetchRates, 60000);
+  </script>
+</body>
+</html>
