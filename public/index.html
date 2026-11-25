@@ -30,14 +30,18 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-3 text-xs">
+      <div class="flex flex-wrap items-center gap-4 text-xs">
+        <nav class="flex items-center gap-4 font-medium text-slate-300">
+          <a href="/" class="text-amber-400">Live Rates</a>
+          <a href="/cities" class="hover:text-amber-400 transition">City Rates</a>
+          <a href="/about" class="hover:text-amber-400 transition">About</a>
+        </nav>
         <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium">
           <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
           LIVE FEED
         </span>
         <span id="last-updated" class="text-slate-400">Updating...</span>
       </div>
-    </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
@@ -160,9 +164,16 @@
 
   </main>
 
-  <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 px-4">
+ <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 px-4 space-y-2">
+    <div class="flex flex-wrap justify-center gap-4 text-slate-400">
+      <a href="/" class="hover:text-amber-400">Live Gold Rates</a>
+      <a href="/cities" class="hover:text-amber-400">City-Wise Gold Rates</a>
+      <a href="/about" class="hover:text-amber-400">About & Methodology</a>
+      <a href="/privacy" class="hover:text-amber-400">Privacy Policy</a>
+      <a href="/disclaimer" class="hover:text-amber-400">Disclaimer</a>
+    </div>
     <p>Rates are derived from live international XAU/USD bullion feeds, real-time USD/INR forex rates, and Indian domestic bullion parity. Local jeweller prices may vary slightly by city.</p>
-    <p class="mt-1">© <span id="year"></span> GoldPriceIndia.live</p>
+    <p>© <span id="year"></span> GoldPriceIndia.live</p>
   </footer>
 
   <script>
