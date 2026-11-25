@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About & Rate Methodology — GoldPriceIndia.live</title>
+  <meta name="description" content="Learn how GoldPriceIndia.live calculates real-time 24K, 22K, 20K, and 18K gold rates in INR using live XAU/USD bullion feeds and USD/INR forex rates." />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-lg font-bold text-white">GoldPriceIndia<span class="text-amber-400">.live</span></a>
+      <nav class="flex gap-4 text-xs text-slate-300">
+        <a href="/" class="hover:text-amber-400">Live Rates</a>
+        <a href="/cities" class="hover:text-amber-400">City Rates</a>
+        <a href="/about" class="text-amber-400">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-10 space-y-6 text-sm text-slate-300 leading-relaxed">
+    <h1 class="text-2xl font-bold text-white">About GoldPriceIndia.live</h1>
+    <p><strong>GoldPriceIndia.live</strong> is an independent, real-time bullion and jewellery price tracker built for Indian consumers, retail investors, and jewellers. Our goal is to provide fast, transparent, and easy-to-verify gold prices in Indian Rupees (INR) without clutter or hidden markups.</p>
+
+    <h2 class="text-lg font-semibold text-white pt-2">How Our Gold Rates Are Calculated</h2>
+    <ul class="list-disc pl-5 space-y-2">
+      <li><strong>Global Spot Feed (XAU/USD):</strong> We fetch live international troy ounce gold prices (1 troy ounce = 31.1034768 grams) every 60 seconds.</li>
+      <li><strong>Intraday USD/INR Exchange Rate:</strong> We convert international USD spot prices using live intraday USD-to-INR foreign exchange feeds with multi-provider redundancy.</li>
+      <li><strong>Indian Landed Bullion Benchmark:</strong> Domestic Indian bullion prices include customs levies, AIDC, and local market parity factors to reflect realistic Indian market rates before 3% GST and making charges.</li>
+      <li><strong>Karat Purity Breakdown:</strong> 22K (91.6%), 20K (83.3%), and 18K (75.0%) rates are derived proportionally from the 24K (99.9%) fine gold rate.</li>
+    </ul>
+
+    <h2 class="text-lg font-semibold text-white pt-2">Contact & Editorial Inquiries</h2>
+    <p>For data feedback, city bullion listing requests, or partnership inquiries, reach out to our team at <span class="text-amber-400">contact@goldpriceindia.live</span>.</p>
+  </main>
+
+  <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 space-y-2">
+    <div class="flex justify-center gap-4 text-slate-400">
+      <a href="/" class="hover:text-amber-400">Home</a>
+      <a href="/cities" class="hover:text-amber-400">City Rates</a>
+      <a href="/about" class="hover:text-amber-400">About</a>
+      <a href="/privacy" class="hover:text-amber-400">Privacy Policy</a>
+      <a href="/disclaimer" class="hover:text-amber-400">Disclaimer</a>
+    </div>
+    <p>© <span id="year"></span> GoldPriceIndia.live</p>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
