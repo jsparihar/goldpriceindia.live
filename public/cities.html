@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Today's Gold Rate by City in India (24K & 22K) — GoldPriceIndia.live</title>
+  <meta name="description" content="Compare today's live 24K and 22K gold rates per 10 grams across Mumbai, Delhi, Chennai, Bengaluru, Hyderabad, Bhopal, Indore, Kolkata, and major Indian cities." />
+  <link rel="canonical" href="https://goldpriceindia.live/cities" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-slate-950 font-bold text-lg">Au</div>
+        <div>
+          <span class="text-lg font-bold text-white">GoldPriceIndia<span class="text-amber-400">.live</span></span>
+          <p class="text-xs text-slate-400">City-Wise Indian Bullion Rates</p>
+        </div>
+      </a>
+      <nav class="flex items-center gap-4 text-xs font-medium text-slate-300">
+        <a href="/" class="hover:text-amber-400">Live Rates</a>
+        <a href="/cities" class="text-amber-400">City Rates</a>
+        <a href="/about" class="hover:text-amber-400">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Today's Gold Rate in Major Indian Cities</h1>
+        <p class="text-xs text-slate-400 mt-1">Live 24K (999) and 22K (916) rates per 10 grams (excluding 3% GST & making charges).</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <input id="city-search" type="text" placeholder="Search city (e.g. Bhopal, Mumbai)..." oninput="renderCities()"
+          class="bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-amber-400" />
+        <span id="city-updated" class="text-xs text-slate-400">Loading...</span>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-950/70 text-slate-400 text-xs uppercase">
+            <tr>
+              <th class="px-5 py-3.5">City</th>
+              <th class="px-5 py-3.5">State</th>
+              <th class="px-5 py-3.5">24K (10 Grams)</th>
+              <th class="px-5 py-3.5">22K (10 Grams)</th>
+              <th class="px-5 py-3.5">22K (1 Gram)</th>
+            </tr>
+          </thead>
+          <tbody id="city-table-body" class="divide-y divide-slate-800 text-slate-200"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <section class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-xs text-slate-400 space-y-2">
+      <h2 class="text-sm font-semibold text-white">Why Do Gold Rates Vary Slightly Across Indian Cities?</h2>
+      <p>While international spot gold (XAU/USD) and the USD/INR exchange rate set the base benchmark across India, local bullion association quotes vary slightly by city due to state-level logistics, vaulting/insurance costs, local demand volume, and regional bullion dealer spreads.</p>
+    </section>
+  </main>
+
+  <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 px-4 space-y-2">
+    <div class="flex justify-center gap-4 text-slate-400">
+      <a href="/" class="hover:text-amber-400">Home</a>
+      <a href="/cities" class="hover:text-amber-400">City Rates</a>
+      <a href="/about" class="hover:text-amber-400">About</a>
+      <a href="/privacy" class="hover:text-amber-400">Privacy Policy</a>
+      <a href="/disclaimer" class="hover:text-amber-400">Disclaimer</a>
+    </div>
+    <p>© <span id="year"></span> GoldPriceIndia.live</p>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const CITIES = [
+      { name: "Mumbai", state: "Maharashtra", delta10g: 0 },
+      { name: "Delhi", state: "Delhi NCR", delta10g: 150 },
+      { name: "Chennai", state: "Tamil Nadu", delta10g: 420 },
+      { name: "Bengaluru", state: "Karnataka", delta10g: 100 },
+      { name: "Hyderabad", state: "Telangana", delta10g: 120 },
+      { name: "Kolkata", state: "West Bengal", delta10g: 110 },
+      { name: "Bhopal", state: "Madhya Pradesh", delta10g: 90 },
+      { name: "Indore", state: "Madhya Pradesh", delta10g: 70 },
+      { name: "Ahmedabad", state: "Gujarat", delta10g: 50 },
+      { name: "Jaipur", state: "Rajasthan", delta10g: 140 },
+      { name: "Pune", state: "Maharashtra", delta10g: 20 },
+      { name: "Lucknow", state: "Uttar Pradesh", delta10g: 160 },
+      { name: "Surat", state: "Gujarat", delta10g: 50 },
+      { name: "Kochi", state: "Kerala", delta10g: 350 },
+      { name: "Chandigarh", state: "Chandigarh", delta10g: 160 },
+      { name: "Patna", state: "Bihar", delta10g: 180 }
+    ];
+
+    let base24k10g = 0;
+    const formatINR = (val) =>
+      "₹" + Number(val).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function renderCities() {
+      if (!base24k10g) return;
+      const q = document.getElementById("city-search").value.trim().toLowerCase();
+      const filtered = CITIES.filter(c => c.name.toLowerCase().includes(q) || c.state.toLowerCase().includes(q));
+
+      document.getElementById("city-table-body").innerHTML = filtered.map(c => {
+        const rate24k10g = base24k10g + c.delta10g;
+        const rate22k10g = rate24k10g * (22 / 24);
+        const rate22k1g = rate22k10g / 10;
+        return `
+          <tr class="hover:bg-slate-800/40">
+            <td class="px-5 py-3.5 font-semibold text-white">${c.name}</td>
+            <td class="px-5 py-3.5 text-slate-400">${c.state}</td>
+            <td class="px-5 py-3.5 text-amber-400 font-semibold">${formatINR(rate24k10g)}</td>
+            <td class="px-5 py-3.5 font-medium">${formatINR(rate22k10g)}</td>
+            <td class="px-5 py-3.5 text-slate-300">${formatINR(rate22k1g)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function loadCityRates() {
+      try {
+        const res = await fetch("/api/rates");
+        const data = await res.json();
+        base24k10g = data.rates_inr["24K"].per_10g;
+        const timeStr = new Date(data.updated_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+        document.getElementById("city-updated").textContent = "Updated: " + timeStr + " IST";
+        renderCities();
+      } catch (e) {
+        document.getElementById("city-updated").textContent = "Feed unavailable";
+      }
+    }
+
+    loadCityRates();
+  </script>
+</body>
+</html>
