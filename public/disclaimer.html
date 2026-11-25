@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disclaimer — GoldPriceIndia.live</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="text-lg font-bold text-white">GoldPriceIndia<span class="text-amber-400">.live</span></a>
+      <a href="/" class="text-xs text-slate-300 hover:text-amber-400">← Back to Live Rates</a>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-10 space-y-5 text-sm text-slate-300 leading-relaxed">
+    <h1 class="text-2xl font-bold text-white">Financial & Bullion Rate Disclaimer</h1>
+
+    <p>The gold prices, currency exchange rates, and jewellery cost calculations displayed on <strong>GoldPriceIndia.live</strong> are provided for informational and educational purposes only.</p>
+
+    <h2 class="text-lg font-semibold text-white pt-2">No Financial or Investment Advice</h2>
+    <p>Nothing on this website constitutes financial, investment, tax, or legal advice. Precious metal prices are volatile and fluctuate continuously. Always consult a SEBI-registered financial advisor or certified bullion dealer before making investment decisions.</p>
+
+    <h2 class="text-lg font-semibold text-white pt-2">Indicative Market Rates</h2>
+    <p>Rates are synthesized from international spot gold feeds (XAU/USD), intraday USD/INR exchange rates, and estimated Indian landed bullion parity. Actual retail showroom prices across Indian cities may differ due to local bullion association spreads, making charges, wastage, hallmarking fees, and applicable Goods and Services Tax (GST).</p>
+  </main>
+
+  <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 space-y-2">
+    <div class="flex justify-center gap-4 text-slate-400">
+      <a href="/" class="hover:text-amber-400">Home</a>
+      <a href="/cities" class="hover:text-amber-400">City Rates</a>
+      <a href="/about" class="hover:text-amber-400">About</a>
+      <a href="/privacy" class="hover:text-amber-400">Privacy Policy</a>
+      <a href="/disclaimer" class="hover:text-amber-400">Disclaimer</a>
+    </div>
+    <p>© <span id="year"></span> GoldPriceIndia.live</p>
+  </footer>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
