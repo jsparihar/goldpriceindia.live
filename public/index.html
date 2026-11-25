@@ -26,7 +26,7 @@
           <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">
             GoldPriceIndia<span class="text-amber-400">.live</span>
           </h1>
-          <p class="text-xs text-slate-400">Real-Time Bullion & Karat Rates in INR</p>
+          <p class="text-xs text-slate-400">Real-Time Indian Bullion & Karat Rates in INR</p>
         </div>
       </div>
 
@@ -51,26 +51,30 @@
         <div class="h-8 w-px bg-slate-800 hidden sm:block"></div>
         <div>
           <span class="text-xs uppercase tracking-wider text-slate-400 block">USD / INR Rate</span>
-          <span id="usd-inr" class="text-lg font-semibold text-white">₹--.--</span>
+          <span id="usd-inr" class="text-lg font-semibold text-white">₹--.----</span>
         </div>
       </div>
 
-      <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 self-start md:self-auto">
-        <button id="btn-spot" onclick="setPriceMode('spot')"
+      <div class="flex flex-wrap items-center bg-slate-950 p-1 rounded-xl border border-slate-800 self-start md:self-auto gap-1">
+        <button id="btn-india" onclick="setPriceMode('india')"
           class="px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950">
-          Raw Bullion Spot
+          India Bullion (Ex-GST)
         </button>
-        <button id="btn-retail" onclick="setPriceMode('retail')"
+        <button id="btn-gst" onclick="setPriceMode('gst')"
           class="px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
-          Est. Retail (+6% Duty & 3% GST)
+          India Retail (+3% GST)
+        </button>
+        <button id="btn-spot" onclick="setPriceMode('spot')"
+          class="px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+          Global Spot Parity
         </button>
       </div>
     </section>
 
     <section>
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h2 class="text-lg font-semibold text-white">Today's Gold Rate by Purity</h2>
-        <span id="mode-caption" class="text-xs text-slate-400">Showing pure international spot parity (excluding taxes)</span>
+        <span id="mode-caption" class="text-xs text-slate-400">Indian domestic bullion benchmark rate (excluding 3% GST & making charges)</span>
       </div>
 
       <div id="karat-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
@@ -78,7 +82,7 @@
 
     <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
       <h2 class="text-lg font-semibold text-white mb-1">Gold & Jewellery Price Calculator</h2>
-      <p class="text-xs text-slate-400 mb-6">Calculate exact bullion value or final jewellery bill with making charges and 3% Indian GST.</p>
+      <p class="text-xs text-slate-400 mb-6">Calculate exact Indian bullion value or final jewellery bill with making charges and 3% GST.</p>
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
@@ -157,7 +161,7 @@
   </main>
 
   <footer class="border-t border-slate-800 mt-12 py-6 text-center text-xs text-slate-500 px-4">
-    <p>Rates are derived from live international XAU/USD bullion feeds and USD/INR forex rates. Local jeweller prices may vary slightly by city and bullion premium.</p>
+    <p>Rates are derived from live international XAU/USD bullion feeds, real-time USD/INR forex rates, and Indian domestic bullion parity. Local jeweller prices may vary slightly by city.</p>
     <p class="mt-1">© <span id="year"></span> GoldPriceIndia.live</p>
   </footer>
 
@@ -165,8 +169,8 @@
     document.getElementById("year").textContent = new Date().getFullYear();
 
     let latestRates = null;
-    let priceMode = "spot";
-    const RETAIL_MULTIPLIER = 1.06 * 1.03;
+    let priceMode = "india";
+    const INDIA_BULLION_MULTIPLIER = 1.155;
 
     const KARAT_META = {
       "24K": { label: "24 Karat", purity: "99.9% Pure Bullion", badge: "bg-amber-400/15 text-amber-300 border-amber-400/30" },
@@ -180,26 +184,33 @@
 
     function setPriceMode(mode) {
       priceMode = mode;
-      const btnSpot = document.getElementById("btn-spot");
-      const btnRetail = document.getElementById("btn-retail");
-      const caption = document.getElementById("mode-caption");
+      const activeCls = "px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950";
+      const inactiveCls = "px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
 
-      if (mode === "spot") {
-        btnSpot.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950";
-        btnRetail.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
-        caption.textContent = "Showing pure international spot parity (excluding taxes)";
+      document.getElementById("btn-india").className = mode === "india" ? activeCls : inactiveCls;
+      document.getElementById("btn-gst").className = mode === "gst" ? activeCls : inactiveCls;
+      document.getElementById("btn-spot").className = mode === "spot" ? activeCls : inactiveCls;
+
+      const caption = document.getElementById("mode-caption");
+      if (mode === "india") {
+        caption.textContent = "Indian domestic bullion benchmark rate (excluding 3% GST & making charges)";
+      } else if (mode === "gst") {
+        caption.textContent = "Indian domestic bullion rate including 3% GST (excluding making charges)";
       } else {
-        btnRetail.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950";
-        btnSpot.className = "px-3.5 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white";
-        caption.textContent = "Includes estimated 6% Indian import duty & 3% GST";
+        caption.textContent = "Showing pure international spot parity (excluding Indian levies & taxes)";
       }
       renderUI();
     }
 
     function getAdjusted1g(karat) {
       if (!latestRates) return 0;
-      const base = latestRates.rates_inr[karat].per_1g;
-      return priceMode === "retail" ? base * RETAIL_MULTIPLIER : base;
+      const indiaBase = latestRates.rates_inr[karat].per_1g;
+      if (priceMode === "spot") {
+        return latestRates.raw_spot_inr
+          ? latestRates.raw_spot_inr[karat].per_1g
+          : indiaBase / INDIA_BULLION_MULTIPLIER;
+      }
+      return priceMode === "gst" ? indiaBase * 1.03 : indiaBase;
     }
 
     function renderUI() {
@@ -207,7 +218,7 @@
 
       document.getElementById("spot-usd").textContent =
         "$" + Number(latestRates.spot_usd_oz).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " / oz";
-      document.getElementById("usd-inr").textContent = "₹" + Number(latestRates.usd_inr).toFixed(2);
+      document.getElementById("usd-inr").textContent = "₹" + Number(latestRates.usd_inr).toFixed(4);
 
       const timeStr = new Date(latestRates.updated_at).toLocaleTimeString("en-IN", {
         hour: "2-digit", minute: "2-digit", second: "2-digit"
@@ -285,28 +296,35 @@
         try {
           const [goldRes, fxRes] = await Promise.all([
             fetch("https://api.gold-api.com/price/XAU"),
-            fetch("https://api.frankfurter.app/latest?from=USD&to=INR")
+            fetch("https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json")
           ]);
           const goldData = await goldRes.json();
           const fxData = await fxRes.json();
           const xauUsd = goldData.price;
-          const usdInr = fxData.rates.INR;
-          const rate24k = (xauUsd / 31.1034768) * usdInr;
+          const usdInr = fxData.usd.inr;
+          const raw24k = (xauUsd / 31.1034768) * usdInr;
+          const india24k = raw24k * INDIA_BULLION_MULTIPLIER;
 
-          const makeKarat = (k) => ({
-            per_1g: Number((rate24k * (k / 24)).toFixed(2)),
-            per_10g: Number((rate24k * (k / 24) * 10).toFixed(2))
+          const makeKarat = (base, k) => ({
+            per_1g: Number((base * (k / 24)).toFixed(2)),
+            per_10g: Number((base * (k / 24) * 10).toFixed(2))
           });
 
           latestRates = {
             updated_at: new Date().toISOString(),
             spot_usd_oz: xauUsd,
             usd_inr: usdInr,
+            raw_spot_inr: {
+              "24K": makeKarat(raw24k, 24),
+              "22K": makeKarat(raw24k, 22),
+              "20K": makeKarat(raw24k, 20),
+              "18K": makeKarat(raw24k, 18)
+            },
             rates_inr: {
-              "24K": makeKarat(24),
-              "22K": makeKarat(22),
-              "20K": makeKarat(20),
-              "18K": makeKarat(18)
+              "24K": makeKarat(india24k, 24),
+              "22K": makeKarat(india24k, 22),
+              "20K": makeKarat(india24k, 20),
+              "18K": makeKarat(india24k, 18)
             }
           };
           renderUI();
